@@ -21,30 +21,43 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
+
   .header { padding: 24px 32px; border-bottom: 1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
   .header h1 { font-size: 20px; font-weight: 600; }
   .header h1 span { color: var(--accent2); }
   .header .subtitle { color: var(--text2); font-size: 13px; }
+
   .controls { padding: 20px 32px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; border-bottom: 1px solid var(--border); }
   .controls label { color: var(--text2); font-size: 13px; font-weight: 500; }
-  select, input[type="number"] { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+
+  select, input[type="number"] {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 8px 12px; border-radius: 8px; font-size: 14px; outline: none;
+    transition: border-color 0.2s;
+  }
   select:focus, input:focus { border-color: var(--accent); }
   select { min-width: 220px; cursor: pointer; }
   input[type="number"] { width: 100px; text-align: right; }
+
   .toggle-group { display:flex; background: var(--surface2); border-radius: 8px; overflow:hidden; border: 1px solid var(--border); }
   .toggle-btn { padding: 8px 16px; font-size: 13px; cursor:pointer; border:none; background:transparent; color: var(--text2); transition: all 0.2s; }
   .toggle-btn.active { background: var(--accent); color: #fff; }
+
   .main { padding: 24px 32px; display: grid; gap: 24px; }
+
   .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
   .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
   .stat-card .label { font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
   .stat-card .value { font-size: 28px; font-weight: 700; }
+  .stat-card .sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
   .stat-card.green .value { color: var(--green); }
   .stat-card.purple .value { color: var(--accent2); }
   .stat-card.orange .value { color: var(--orange); }
   .stat-card.blue .value { color: var(--blue); }
+
   .section-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
   .section-sub { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
+
   .projections { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .proj-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
   .proj-card.low { border-left: 3px solid var(--orange); }
@@ -55,52 +68,291 @@
   .proj-card.high .big-num { color: var(--green); }
   .proj-card .detail { font-size: 13px; color: var(--text2); margin-top: 8px; }
   .proj-card .detail span { color: var(--text); font-weight: 500; }
+
   .calc-inputs { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
   .calc-group { display: flex; flex-direction: column; gap: 4px; }
   .calc-group label { font-size: 12px; color: var(--text2); }
   .calc-group input { width: 120px; }
-  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead { background: var(--surface2); }
-  th { padding: 12px 16px; text-align: left; color: var(--text2); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-  td { padding: 12px 16px; border-top: 1px solid var(--border); }
-  tr:hover td { background: rgba(108,92,231,0.05); }
-  tr { cursor: pointer; }
-  tr.selected td { background: rgba(108,92,231,0.12); }
-  .rank { color: var(--text2); font-size: 12px; }
-  .money { color: var(--green); font-weight: 600; }
-  .num { color: var(--text); }
-  @media (max-width: 768px) { .projections { grid-template-columns: 1fr; } .controls { flex-direction: column; align-items: stretch; } .header { flex-direction: column; gap: 8px; } }
+
+  .empty { text-align: center; padding: 60px; color: var(--text2); }
+
+  .export-btn {
+    padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer;
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .export-btn:hover { background: var(--accent2); }
+  .export-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+  @media (max-width: 768px) {
+    .projections { grid-template-columns: 1fr; }
+    .controls { flex-direction: column; align-items: stretch; }
+    .header { flex-direction: column; gap: 8px; }
+  }
+
+  @media print {
+    body { background: #fff !important; color: #1a1a2e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header { border-bottom: 2px solid #e0e0e0; padding: 16px 24px; }
+    .header h1 { color: #1a1a2e; }
+    .header h1 span { color: #6c5ce7; }
+    .header .subtitle { color: #666; }
+    .controls { display: none !important; }
+    .main { padding: 16px 24px; gap: 16px; }
+    .stat-card { background: #f8f9fa !important; border: 1px solid #e0e0e0 !important; }
+    .stat-card .label { color: #666 !important; }
+    .stat-card .value { font-size: 22px; }
+    .proj-card { background: #f8f9fa !important; border: 1px solid #e0e0e0 !important; }
+    .proj-card h3 { color: #666 !important; }
+    .proj-card .detail { color: #666 !important; }
+    .proj-card .detail span { color: #1a1a2e !important; }
+    .calc-inputs { display: none !important; }
+    .export-wrap { display: none !important; }
+    .print-header { display: block !important; }
+    .section-sub { color: #666 !important; }
+    .section-title { color: #1a1a2e !important; }
+  }
+
+  .print-header {
+    display: none;
+    padding: 4px 24px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 14px;
+    color: #333;
+  }
+  .print-header .ph-name { font-size: 22px; font-weight: 700; color: #1a1a2e; margin-bottom: 2px; }
+  .print-header .ph-type { font-size: 13px; color: #666; }
+  .print-header .ph-inputs { font-size: 12px; color: #888; margin-top: 6px; }
 </style>
 </head>
 <body>
-<div class="header"><div><h1><span>Recess</span> — Partner Revenue Model</h1><div class="subtitle">Live data from platform • Last updated Feb 2026</div></div></div>
-<div class="controls"><div class="toggle-group"><button class="toggle-btn active" onclick="setView('org')">By Supplier Org</button><button class="toggle-btn" onclick="setView('type')">By Event Type</button></div><div style="display:flex;align-items:center;gap:8px;"><label>Select:</label><select id="selector" onchange="onSelect()"></select></div></div>
-<div class="main">
-<div><div class="section-title">Current Platform Performance</div><div class="section-sub" id="perfSub">Select a supplier org or event type above</div></div>
-<div class="stats-row"><div class="stat-card green"><div class="label">Total Payouts (GMV)</div><div class="value" id="s-gmv">—</div></div><div class="stat-card purple"><div class="label">Total Offers</div><div class="value" id="s-offers">—</div></div><div class="stat-card blue"><div class="label">Locations on Platform</div><div class="value" id="s-locs">—</div></div><div class="stat-card orange"><div class="label">Avg Payout / Offer</div><div class="value" id="s-avg">—</div></div></div>
-<div class="stats-row"><div class="stat-card"><div class="label">Total Samples</div><div class="value num" id="s-samples">—</div></div><div class="stat-card"><div class="label">Avg Samples / Offer</div><div class="value num" id="s-avgsamp">—</div></div></div>
-<div style="margin-top:8px;"><div class="section-title">Revenue Projection Calculator</div><div class="section-sub">Enter the partner's full network size and offers/location/year to project revenue</div></div>
-<div class="calc-inputs"><div class="calc-group"><label>Total Locations (Network)</label><input type="number" id="inp-locs" value="100" min="1" oninput="recalc()"></div><div class="calc-group"><label>Offers/Loc/Yr (Low)</label><input type="number" id="inp-low" value="2" min="1" oninput="recalc()"></div><div class="calc-group"><label>Offers/Loc/Yr (High)</label><input type="number" id="inp-high" value="6" min="1" oninput="recalc()"></div><div class="calc-group"><label>Organizer Commission %</label><input type="number" id="inp-comm" value="20" min="0" max="100" oninput="recalc()"></div></div>
-<div class="projections"><div class="proj-card low"><h3>Low Scenario</h3><div class="big-num" id="p-low-gmv">$0</div><div class="detail">Projected total payouts (full network)</div><div class="detail" style="margin-top:12px;">Organizer Earnings: <span id="p-low-org">$0</span></div><div class="detail">Total Offers: <span id="p-low-offers">0</span></div><div class="detail">Total Samples: <span id="p-low-samples">0</span></div></div><div class="proj-card high"><h3>High Scenario</h3><div class="big-num" id="p-high-gmv">$0</div><div class="detail">Projected total payouts (full network)</div><div class="detail" style="margin-top:12px;">Organizer Earnings: <span id="p-high-org">$0</span></div><div class="detail">Total Offers: <span id="p-high-offers">0</span></div><div class="detail">Total Samples: <span id="p-high-samples">0</span></div></div></div>
-<div style="margin-top:8px;"><div class="section-title">All <span id="tableLabel">Supplier Orgs</span></div><div class="section-sub">Click any row to load into calculator</div></div>
-<div class="table-wrap"><table><thead><tr><th>#</th><th id="th-name">Supplier Org</th><th>GMV</th><th>Offers</th><th>Locations</th><th>Avg $/Offer</th><th>Samples</th></tr></thead><tbody id="tableBody"></tbody></table></div>
+
+<div class="header">
+  <div>
+    <h1><span>Recess</span> — Partner Revenue Model</h1>
+    <div class="subtitle">Live data from platform • Last updated Feb 2026</div>
+  </div>
 </div>
+
+<div class="controls">
+  <div class="toggle-group">
+    <button class="toggle-btn active" onclick="setView('org')">By Supplier Org</button>
+    <button class="toggle-btn" onclick="setView('type')">By Event Type</button>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:8px;">
+    <label>Select:</label>
+    <select id="selector" onchange="onSelect()"></select>
+  </div>
+</div>
+
+<!-- Print-only header showing selected partner + inputs -->
+<div class="print-header">
+  <div class="ph-name" id="print-name"></div>
+  <div class="ph-type" id="print-type"></div>
+  <div class="ph-inputs" id="print-inputs"></div>
+</div>
+
+<div class="main">
+  <!-- Current Performance -->
+  <div>
+    <div class="section-title">Current Platform Performance</div>
+    <div class="section-sub" id="perfSub">Select a supplier org or event type above</div>
+  </div>
+
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card green"><div class="label">Total Payouts (GMV)</div><div class="value" id="s-gmv">—</div></div>
+    <div class="stat-card purple"><div class="label">Total Offers</div><div class="value" id="s-offers">—</div></div>
+    <div class="stat-card blue"><div class="label">Locations on Platform</div><div class="value" id="s-locs">—</div></div>
+    <div class="stat-card orange"><div class="label">Avg Payout / Offer</div><div class="value" id="s-avg">—</div></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="label">Total Samples</div><div class="value num" id="s-samples">—</div></div>
+    <div class="stat-card"><div class="label">Avg Samples / Offer</div><div class="value num" id="s-avgsamp">—</div></div>
+  </div>
+
+  <!-- Calculator -->
+  <div style="margin-top:8px;">
+    <div class="section-title">Revenue Projection Calculator</div>
+    <div class="section-sub">Enter the partner's full network size and offers/location/year to project revenue</div>
+  </div>
+
+  <div class="calc-inputs">
+    <div class="calc-group">
+      <label>Total Locations (Network)</label>
+      <input type="number" id="inp-locs" value="100" min="1" oninput="recalc()">
+    </div>
+    <div class="calc-group">
+      <label>Offers/Loc/Yr (Low)</label>
+      <input type="number" id="inp-low" value="2" min="1" oninput="recalc()">
+    </div>
+    <div class="calc-group">
+      <label>Offers/Loc/Yr (High)</label>
+      <input type="number" id="inp-high" value="6" min="1" oninput="recalc()">
+    </div>
+    <div class="calc-group">
+      <label>Organizer Commission %</label>
+      <input type="number" id="inp-comm" value="20" min="0" max="100" oninput="recalc()">
+    </div>
+  </div>
+
+  <div class="projections">
+    <div class="proj-card low">
+      <h3>Low Scenario</h3>
+      <div class="big-num" id="p-low-gmv">$0</div>
+      <div class="detail">Projected total payouts (full network)</div>
+      <div class="detail" style="margin-top:12px;">Organizer Earnings: <span id="p-low-org">$0</span></div>
+      <div class="detail">Total Offers: <span id="p-low-offers">0</span></div>
+      <div class="detail">Total Samples: <span id="p-low-samples">0</span></div>
+    </div>
+    <div class="proj-card high">
+      <h3>High Scenario</h3>
+      <div class="big-num" id="p-high-gmv">$0</div>
+      <div class="detail">Projected total payouts (full network)</div>
+      <div class="detail" style="margin-top:12px;">Organizer Earnings: <span id="p-high-org">$0</span></div>
+      <div class="detail">Total Offers: <span id="p-high-offers">0</span></div>
+      <div class="detail">Total Samples: <span id="p-high-samples">0</span></div>
+    </div>
+  </div>
+
+  <!-- Export Button -->
+  <div class="export-wrap" style="display:flex; justify-content:flex-end; margin-top: 8px;">
+    <button class="export-btn" onclick="exportPDF()">
+      <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+      Export PDF
+    </button>
+  </div>
+</div>
+
 <script>
-const DATA_ORG=[{"supplier_org":"Nautical Fulfillment and Logistics","locations_on_platform":3,"total_offers":73,"total_payouts":1046967.35,"total_samples":1,"avg_payout_per_offer":14342.02,"avg_samples_per_offer":0},{"supplier_org":"Bulu Inc.","locations_on_platform":3,"total_offers":59,"total_payouts":967711.65,"total_samples":10,"avg_payout_per_offer":16401.89,"avg_samples_per_offer":0},{"supplier_org":"WeWork","locations_on_platform":1,"total_offers":5580,"total_payouts":916874.83,"total_samples":797171,"avg_payout_per_offer":164.31,"avg_samples_per_offer":143},{"supplier_org":"School Family Media","locations_on_platform":0,"total_offers":13,"total_payouts":487470,"total_samples":1025001,"avg_payout_per_offer":37497.69,"avg_samples_per_offer":78846},{"supplier_org":"Inspired Consumer","locations_on_platform":2,"total_offers":44,"total_payouts":456445.71,"total_samples":1874739,"avg_payout_per_offer":10373.77,"avg_samples_per_offer":42608},{"supplier_org":"Erin Stowell","locations_on_platform":2,"total_offers":15,"total_payouts":454620.38,"total_samples":1,"avg_payout_per_offer":30308.03,"avg_samples_per_offer":0},{"supplier_org":"Crunch Fitness","locations_on_platform":1,"total_offers":680,"total_payouts":409929.63,"total_samples":1457305,"avg_payout_per_offer":602.84,"avg_samples_per_offer":2143},{"supplier_org":"Tanger Outlets","locations_on_platform":1,"total_offers":219,"total_payouts":389046.87,"total_samples":2065588,"avg_payout_per_offer":1776.47,"avg_samples_per_offer":9432},{"supplier_org":"Geezy","locations_on_platform":0,"total_offers":31,"total_payouts":374341.46,"total_samples":624021,"avg_payout_per_offer":12075.53,"avg_samples_per_offer":20130},{"supplier_org":"WPS Administrative Corp","locations_on_platform":1,"total_offers":9,"total_payouts":370555.82,"total_samples":0,"avg_payout_per_offer":41172.87,"avg_samples_per_offer":0},{"supplier_org":"Alpen&Glo","locations_on_platform":1,"total_offers":1,"total_payouts":290000,"total_samples":1,"avg_payout_per_offer":290000,"avg_samples_per_offer":1},{"supplier_org":"UpClose Marketing","locations_on_platform":0,"total_offers":8,"total_payouts":240936.1,"total_samples":520000,"avg_payout_per_offer":30117.01,"avg_samples_per_offer":65000},{"supplier_org":"Spartan Race","locations_on_platform":1,"total_offers":62,"total_payouts":238763.02,"total_samples":101096,"avg_payout_per_offer":3851.02,"avg_samples_per_offer":1631},{"supplier_org":"Cardinal Group Management & Advisory LLC-1","locations_on_platform":1,"total_offers":2091,"total_payouts":187246.94,"total_samples":1236926,"avg_payout_per_offer":89.55,"avg_samples_per_offer":592},{"supplier_org":"West Coast Farmers Market","locations_on_platform":1,"total_offers":130,"total_payouts":160240.6,"total_samples":617357,"avg_payout_per_offer":1232.62,"avg_samples_per_offer":4749},{"supplier_org":"Recess College Bag","locations_on_platform":0,"total_offers":22,"total_payouts":150036.54,"total_samples":1182017,"avg_payout_per_offer":6819.84,"avg_samples_per_offer":53728},{"supplier_org":"Barry's","locations_on_platform":0,"total_offers":1,"total_payouts":150000,"total_samples":1,"avg_payout_per_offer":150000,"avg_samples_per_offer":1},{"supplier_org":"Ventures Endurance","locations_on_platform":1,"total_offers":46,"total_payouts":133835.66,"total_samples":198114,"avg_payout_per_offer":2909.47,"avg_samples_per_offer":4307},{"supplier_org":"LeagueSide","locations_on_platform":0,"total_offers":38,"total_payouts":130766.8,"total_samples":185747,"avg_payout_per_offer":3441.23,"avg_samples_per_offer":4888},{"supplier_org":"Eagle Printing & Sign","locations_on_platform":2,"total_offers":78,"total_payouts":128926.77,"total_samples":3,"avg_payout_per_offer":1652.91,"avg_samples_per_offer":0},{"supplier_org":"DoorDash","locations_on_platform":1,"total_offers":13,"total_payouts":126951,"total_samples":57960,"avg_payout_per_offer":9765.46,"avg_samples_per_offer":4458},{"supplier_org":"Players Sport & Social Group","locations_on_platform":0,"total_offers":39,"total_payouts":121190,"total_samples":0,"avg_payout_per_offer":3107.44,"avg_samples_per_offer":0},{"supplier_org":"Brand Distribution Network","locations_on_platform":4,"total_offers":23,"total_payouts":120584.42,"total_samples":21,"avg_payout_per_offer":5242.8,"avg_samples_per_offer":1},{"supplier_org":"HelloFresh","locations_on_platform":0,"total_offers":5,"total_payouts":117865.5,"total_samples":371950,"avg_payout_per_offer":23573.1,"avg_samples_per_offer":74390},{"supplier_org":"Elevate Digital USA LLC","locations_on_platform":1,"total_offers":55,"total_payouts":112844.05,"total_samples":0,"avg_payout_per_offer":2051.71,"avg_samples_per_offer":0},{"supplier_org":"The Original Farmers Market","locations_on_platform":1,"total_offers":16,"total_payouts":103335.57,"total_samples":190692,"avg_payout_per_offer":6458.47,"avg_samples_per_offer":11918},{"supplier_org":"Current International Freight Inc","locations_on_platform":1,"total_offers":3,"total_payouts":101869.85,"total_samples":0,"avg_payout_per_offer":33956.62,"avg_samples_per_offer":0},{"supplier_org":"Asset Living","locations_on_platform":1,"total_offers":709,"total_payouts":89886.81,"total_samples":662513,"avg_payout_per_offer":126.78,"avg_samples_per_offer":934},{"supplier_org":"Breakaway Music Festival","locations_on_platform":0,"total_offers":8,"total_payouts":87355.2,"total_samples":72000,"avg_payout_per_offer":10919.4,"avg_samples_per_offer":9000},{"supplier_org":"NYC Street Fairs","locations_on_platform":0,"total_offers":19,"total_payouts":82960.66,"total_samples":108000,"avg_payout_per_offer":4366.35,"avg_samples_per_offer":5684},{"supplier_org":"The Black Sheep","locations_on_platform":1,"total_offers":417,"total_payouts":74626.68,"total_samples":138648,"avg_payout_per_offer":178.96,"avg_samples_per_offer":332},{"supplier_org":"Drink. Eat. Relax.","locations_on_platform":0,"total_offers":8,"total_payouts":73188,"total_samples":0,"avg_payout_per_offer":9148.5,"avg_samples_per_offer":0},{"supplier_org":"Nadel","locations_on_platform":1,"total_offers":2,"total_payouts":72018.74,"total_samples":0,"avg_payout_per_offer":36009.37,"avg_samples_per_offer":0},{"supplier_org":"Scream Park","locations_on_platform":0,"total_offers":15,"total_payouts":70633.32,"total_samples":329098,"avg_payout_per_offer":4708.89,"avg_samples_per_offer":21940},{"supplier_org":"Follett","locations_on_platform":1,"total_offers":71,"total_payouts":70001.4,"total_samples":0,"avg_payout_per_offer":985.94,"avg_samples_per_offer":0},{"supplier_org":"Trillion Sources","locations_on_platform":1,"total_offers":7,"total_payouts":69925.25,"total_samples":0,"avg_payout_per_offer":9989.32,"avg_samples_per_offer":0},{"supplier_org":"Experiential Supply Co","locations_on_platform":0,"total_offers":11,"total_payouts":69436.6,"total_samples":325788,"avg_payout_per_offer":6312.42,"avg_samples_per_offer":29617},{"supplier_org":"Ivory Star Productions","locations_on_platform":0,"total_offers":8,"total_payouts":61643.79,"total_samples":391236,"avg_payout_per_offer":7705.47,"avg_samples_per_offer":48905},{"supplier_org":"American Campus Communities","locations_on_platform":1,"total_offers":316,"total_payouts":58972.27,"total_samples":176187,"avg_payout_per_offer":186.62,"avg_samples_per_offer":558},{"supplier_org":"Jersey Strong","locations_on_platform":0,"total_offers":65,"total_payouts":54342.45,"total_samples":205454,"avg_payout_per_offer":836.04,"avg_samples_per_offer":3161},{"supplier_org":"FIFO 3PL","locations_on_platform":1,"total_offers":5,"total_payouts":52609.65,"total_samples":0,"avg_payout_per_offer":10521.93,"avg_samples_per_offer":0},{"supplier_org":"The Scion Group","locations_on_platform":0,"total_offers":253,"total_payouts":52535.28,"total_samples":158843,"avg_payout_per_offer":207.65,"avg_samples_per_offer":628},{"supplier_org":"Bigsley","locations_on_platform":1,"total_offers":21,"total_payouts":52435,"total_samples":380144,"avg_payout_per_offer":2496.9,"avg_samples_per_offer":18102},{"supplier_org":"Andretti Indoor Karting & Games","locations_on_platform":1,"total_offers":40,"total_payouts":46611.51,"total_samples":76648,"avg_payout_per_offer":1165.29,"avg_samples_per_offer":1916},{"supplier_org":"F45","locations_on_platform":1,"total_offers":635,"total_payouts":46494.16,"total_samples":204897,"avg_payout_per_offer":73.22,"avg_samples_per_offer":323},{"supplier_org":"eyeBanner","locations_on_platform":1,"total_offers":30,"total_payouts":38714.02,"total_samples":0,"avg_payout_per_offer":1290.47,"avg_samples_per_offer":0},{"supplier_org":"Prime Social Group","locations_on_platform":0,"total_offers":3,"total_payouts":36350,"total_samples":45000,"avg_payout_per_offer":12116.67,"avg_samples_per_offer":15000},{"supplier_org":"Cannonball Productions","locations_on_platform":0,"total_offers":36,"total_payouts":35822,"total_samples":11250,"avg_payout_per_offer":995.06,"avg_samples_per_offer":313},{"supplier_org":"Ragnar","locations_on_platform":0,"total_offers":35,"total_payouts":35795.52,"total_samples":28973,"avg_payout_per_offer":1022.73,"avg_samples_per_offer":828},{"supplier_org":"Hot Wheels Monster Trucks Live","locations_on_platform":0,"total_offers":21,"total_payouts":35414.8,"total_samples":134672,"avg_payout_per_offer":1686.42,"avg_samples_per_offer":6413}];
-const DATA_TYPE=[{"event_type":"shipping","locations_on_platform":13,"total_offers":172,"total_payouts":2734805.03,"total_samples":25,"avg_payout_per_offer":15900.03,"avg_samples_per_offer":0},{"event_type":"coworking","locations_on_platform":1,"total_offers":6576,"total_payouts":1072068.85,"total_samples":1230931,"avg_payout_per_offer":163.03,"avg_samples_per_offer":187},{"event_type":"fitness_studio","locations_on_platform":1,"total_offers":2441,"total_payouts":956825.16,"total_samples":3135729,"avg_payout_per_offer":391.98,"avg_samples_per_offer":1285},{"event_type":"university_housing","locations_on_platform":1,"total_offers":5705,"total_payouts":769505.79,"total_samples":4433045,"avg_payout_per_offer":134.88,"avg_samples_per_offer":777},{"event_type":"family_event","locations_on_platform":1,"total_offers":82,"total_payouts":554494.45,"total_samples":1345595,"avg_payout_per_offer":6762.13,"avg_samples_per_offer":16410},{"event_type":"travel_hospitality","locations_on_platform":1,"total_offers":40,"total_payouts":483742.86,"total_samples":805370,"avg_payout_per_offer":12093.57,"avg_samples_per_offer":20134},{"event_type":"mall","locations_on_platform":1,"total_offers":248,"total_payouts":450551.26,"total_samples":2115422,"avg_payout_per_offer":1816.74,"avg_samples_per_offer":8530},{"event_type":"endurance_race","locations_on_platform":1,"total_offers":226,"total_payouts":449923.86,"total_samples":528335,"avg_payout_per_offer":1990.81,"avg_samples_per_offer":2338},{"event_type":"staffing","locations_on_platform":1,"total_offers":13,"total_payouts":432488.88,"total_samples":1,"avg_payout_per_offer":33268.38,"avg_samples_per_offer":0},{"event_type":"student_involvement","locations_on_platform":1,"total_offers":56,"total_payouts":345600.75,"total_samples":1246691,"avg_payout_per_offer":6171.44,"avg_samples_per_offer":22262},{"event_type":"haunted_house","locations_on_platform":1,"total_offers":96,"total_payouts":320434.08,"total_samples":1653342,"avg_payout_per_offer":3337.85,"avg_samples_per_offer":17222},{"event_type":"custom_fabrication","locations_on_platform":2,"total_offers":2,"total_payouts":293190,"total_samples":1,"avg_payout_per_offer":146595,"avg_samples_per_offer":1},{"event_type":"farmers_market","locations_on_platform":1,"total_offers":178,"total_payouts":280788.6,"total_samples":809157,"avg_payout_per_offer":1577.46,"avg_samples_per_offer":4546},{"event_type":"university_event","locations_on_platform":0,"total_offers":304,"total_payouts":255347.5,"total_samples":75668,"avg_payout_per_offer":839.96,"avg_samples_per_offer":249},{"event_type":"music_festival","locations_on_platform":1,"total_offers":71,"total_payouts":237522.86,"total_samples":402892,"avg_payout_per_offer":3345.39,"avg_samples_per_offer":5675},{"event_type":"other","locations_on_platform":9,"total_offers":65,"total_payouts":209192.93,"total_samples":0,"avg_payout_per_offer":3218.35,"avg_samples_per_offer":0},{"event_type":"printing","locations_on_platform":8,"total_offers":143,"total_payouts":199016.62,"total_samples":14,"avg_payout_per_offer":1391.72,"avg_samples_per_offer":0},{"event_type":"youth_sports","locations_on_platform":1,"total_offers":48,"total_payouts":151439.8,"total_samples":300718,"avg_payout_per_offer":3155,"avg_samples_per_offer":6265},{"event_type":"holiday_lights_drive_thru","locations_on_platform":1,"total_offers":38,"total_payouts":146526.62,"total_samples":657444,"avg_payout_per_offer":3855.96,"avg_samples_per_offer":17301},{"event_type":"digital_media","locations_on_platform":5,"total_offers":61,"total_payouts":133412,"total_samples":1,"avg_payout_per_offer":2187.08,"avg_samples_per_offer":0}];
-let currentView='org',selectedItem=null;
-function fmt(n){return'$'+Math.round(n).toLocaleString()}
-function fmtN(n){return Math.round(n).toLocaleString()}
-function prettyType(s){return s.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}
-function setView(v){currentView=v;selectedItem=null;document.querySelectorAll('.toggle-btn').forEach((b,i)=>{b.classList.toggle('active',(i===0&&v==='org')||(i===1&&v==='type'))});document.getElementById('th-name').textContent=v==='org'?'Supplier Org':'Event Type';document.getElementById('tableLabel').textContent=v==='org'?'Supplier Orgs':'Event Types';populateSelector();renderTable();clearStats()}
-function populateSelector(){const s=document.getElementById('selector'),d=currentView==='org'?DATA_ORG:DATA_TYPE,k=currentView==='org'?'supplier_org':'event_type';s.innerHTML='<option value="">— Select —</option>';d.forEach(r=>{const n=currentView==='type'?prettyType(r[k]):r[k];s.innerHTML+=`<option value="${r[k]}">${n}</option>`})}
-function renderTable(){const d=currentView==='org'?DATA_ORG:DATA_TYPE,k=currentView==='org'?'supplier_org':'event_type',t=document.getElementById('tableBody');t.innerHTML='';d.forEach((r,i)=>{const n=currentView==='type'?prettyType(r[k]):r[k],s=selectedItem===r[k]?' selected':'';t.innerHTML+=`<tr class="${s}" onclick="selectRow('${r[k].replace(/'/g,"\\'")}')"><td class="rank">${i+1}</td><td>${n}</td><td class="money">${fmt(r.total_payouts)}</td><td class="num">${fmtN(r.total_offers)}</td><td class="num">${fmtN(r.locations_on_platform)}</td><td class="num">${fmt(r.avg_payout_per_offer)}</td><td class="num">${fmtN(r.total_samples)}</td></tr>`})}
-function selectRow(k){selectedItem=k;document.getElementById('selector').value=k;onSelect();renderTable()}
-function onSelect(){const v=document.getElementById('selector').value;if(!v){clearStats();return}selectedItem=v;const d=currentView==='org'?DATA_ORG:DATA_TYPE,k=currentView==='org'?'supplier_org':'event_type',item=d.find(r=>r[k]===v);if(!item)return;const dn=currentView==='type'?prettyType(v):v;document.getElementById('perfSub').textContent=`Showing all-time platform data for ${dn}`;document.getElementById('s-gmv').textContent=fmt(item.total_payouts);document.getElementById('s-offers').textContent=fmtN(item.total_offers);document.getElementById('s-locs').textContent=fmtN(item.locations_on_platform);document.getElementById('s-avg').textContent=fmt(item.avg_payout_per_offer);document.getElementById('s-samples').textContent=fmtN(item.total_samples);document.getElementById('s-avgsamp').textContent=fmtN(item.avg_samples_per_offer);renderTable();recalc()}
-function clearStats(){document.getElementById('perfSub').textContent='Select a supplier org or event type above';['s-gmv','s-offers','s-locs','s-avg','s-samples','s-avgsamp'].forEach(id=>{document.getElementById(id).textContent='—'});recalc()}
-function recalc(){const v=document.getElementById('selector').value,d=currentView==='org'?DATA_ORG:DATA_TYPE,k=currentView==='org'?'supplier_org':'event_type',item=v?d.find(r=>r[k]===v):null,locs=parseFloat(document.getElementById('inp-locs').value)||0,lr=parseFloat(document.getElementById('inp-low').value)||0,hr=parseFloat(document.getElementById('inp-high').value)||0,cp=parseFloat(document.getElementById('inp-comm').value)||0,ap=item?item.avg_payout_per_offer:0,as=item?item.avg_samples_per_offer:0,lo=locs*lr,ho=locs*hr,lg=lo*ap,hg=ho*ap;document.getElementById('p-low-gmv').textContent=fmt(lg);document.getElementById('p-high-gmv').textContent=fmt(hg);document.getElementById('p-low-org').textContent=fmt(lg*(cp/100));document.getElementById('p-high-org').textContent=fmt(hg*(cp/100));document.getElementById('p-low-offers').textContent=fmtN(lo);document.getElementById('p-high-offers').textContent=fmtN(ho);document.getElementById('p-low-samples').textContent=fmtN(lo*as);document.getElementById('p-high-samples').textContent=fmtN(ho*as)}
-populateSelector();renderTable();
+const DATA_ORG = [{"supplier_org": "Nautical Fulfillment and Logistics", "locations_on_platform": 3, "total_offers": 73, "total_payouts": 1046967.35, "total_samples": 1, "avg_payout_per_offer": 14342.02, "avg_samples_per_offer": 0}, {"supplier_org": "Bulu Inc.", "locations_on_platform": 3, "total_offers": 59, "total_payouts": 967711.65, "total_samples": 10, "avg_payout_per_offer": 16401.89, "avg_samples_per_offer": 0}, {"supplier_org": "WeWork", "locations_on_platform": 1, "total_offers": 5580, "total_payouts": 916874.83, "total_samples": 797171, "avg_payout_per_offer": 164.31, "avg_samples_per_offer": 143}, {"supplier_org": "School Family Media", "locations_on_platform": 0, "total_offers": 13, "total_payouts": 487470.0, "total_samples": 1025001, "avg_payout_per_offer": 37497.69, "avg_samples_per_offer": 78846}, {"supplier_org": "Inspired Consumer", "locations_on_platform": 2, "total_offers": 44, "total_payouts": 456445.71, "total_samples": 1874739, "avg_payout_per_offer": 10373.77, "avg_samples_per_offer": 42608}, {"supplier_org": "Erin Stowell", "locations_on_platform": 2, "total_offers": 15, "total_payouts": 454620.38, "total_samples": 1, "avg_payout_per_offer": 30308.03, "avg_samples_per_offer": 0}, {"supplier_org": "Crunch Fitness", "locations_on_platform": 1, "total_offers": 680, "total_payouts": 409929.63, "total_samples": 1457305, "avg_payout_per_offer": 602.84, "avg_samples_per_offer": 2143}, {"supplier_org": "Tanger Outlets", "locations_on_platform": 1, "total_offers": 219, "total_payouts": 389046.87, "total_samples": 2065588, "avg_payout_per_offer": 1776.47, "avg_samples_per_offer": 9432}, {"supplier_org": "Geezy", "locations_on_platform": 0, "total_offers": 31, "total_payouts": 374341.46, "total_samples": 624021, "avg_payout_per_offer": 12075.53, "avg_samples_per_offer": 20130}, {"supplier_org": "WPS Administrative Corp", "locations_on_platform": 1, "total_offers": 9, "total_payouts": 370555.82, "total_samples": 0, "avg_payout_per_offer": 41172.87, "avg_samples_per_offer": 0}, {"supplier_org": "Alpen&Glo", "locations_on_platform": 1, "total_offers": 1, "total_payouts": 290000.0, "total_samples": 1, "avg_payout_per_offer": 290000.0, "avg_samples_per_offer": 1}, {"supplier_org": "UpClose Marketing", "locations_on_platform": 0, "total_offers": 8, "total_payouts": 240936.1, "total_samples": 520000, "avg_payout_per_offer": 30117.01, "avg_samples_per_offer": 65000}, {"supplier_org": "Spartan Race", "locations_on_platform": 1, "total_offers": 62, "total_payouts": 238763.02, "total_samples": 101096, "avg_payout_per_offer": 3851.02, "avg_samples_per_offer": 1631}, {"supplier_org": "Cardinal Group Management & Advisory LLC-1", "locations_on_platform": 1, "total_offers": 2091, "total_payouts": 187246.94, "total_samples": 1236926, "avg_payout_per_offer": 89.55, "avg_samples_per_offer": 592}, {"supplier_org": "West Coast Farmers Market", "locations_on_platform": 1, "total_offers": 130, "total_payouts": 160240.6, "total_samples": 617357, "avg_payout_per_offer": 1232.62, "avg_samples_per_offer": 4749}, {"supplier_org": "Recess College Bag", "locations_on_platform": 0, "total_offers": 22, "total_payouts": 150036.54, "total_samples": 1182017, "avg_payout_per_offer": 6819.84, "avg_samples_per_offer": 53728}, {"supplier_org": "Barry's", "locations_on_platform": 0, "total_offers": 1, "total_payouts": 150000.0, "total_samples": 1, "avg_payout_per_offer": 150000.0, "avg_samples_per_offer": 1}, {"supplier_org": "Ventures Endurance", "locations_on_platform": 1, "total_offers": 46, "total_payouts": 133835.66, "total_samples": 198114, "avg_payout_per_offer": 2909.47, "avg_samples_per_offer": 4307}, {"supplier_org": "LeagueSide", "locations_on_platform": 0, "total_offers": 38, "total_payouts": 130766.8, "total_samples": 185747, "avg_payout_per_offer": 3441.23, "avg_samples_per_offer": 4888}, {"supplier_org": "Eagle Printing & Sign", "locations_on_platform": 2, "total_offers": 78, "total_payouts": 128926.77, "total_samples": 3, "avg_payout_per_offer": 1652.91, "avg_samples_per_offer": 0}, {"supplier_org": "DoorDash", "locations_on_platform": 1, "total_offers": 13, "total_payouts": 126951.0, "total_samples": 57960, "avg_payout_per_offer": 9765.46, "avg_samples_per_offer": 4458}, {"supplier_org": "Players Sport & Social Group", "locations_on_platform": 0, "total_offers": 39, "total_payouts": 121190.0, "total_samples": 0, "avg_payout_per_offer": 3107.44, "avg_samples_per_offer": 0}, {"supplier_org": "Brand Distribution Network", "locations_on_platform": 4, "total_offers": 23, "total_payouts": 120584.42, "total_samples": 21, "avg_payout_per_offer": 5242.8, "avg_samples_per_offer": 1}, {"supplier_org": "HelloFresh", "locations_on_platform": 0, "total_offers": 5, "total_payouts": 117865.5, "total_samples": 371950, "avg_payout_per_offer": 23573.1, "avg_samples_per_offer": 74390}, {"supplier_org": "Elevate Digital USA LLC", "locations_on_platform": 1, "total_offers": 55, "total_payouts": 112844.05, "total_samples": 0, "avg_payout_per_offer": 2051.71, "avg_samples_per_offer": 0}, {"supplier_org": "The Original Farmers Market", "locations_on_platform": 1, "total_offers": 16, "total_payouts": 103335.57, "total_samples": 190692, "avg_payout_per_offer": 6458.47, "avg_samples_per_offer": 11918}, {"supplier_org": "Current International Freight Inc", "locations_on_platform": 1, "total_offers": 3, "total_payouts": 101869.85, "total_samples": 0, "avg_payout_per_offer": 33956.62, "avg_samples_per_offer": 0}, {"supplier_org": "Asset Living", "locations_on_platform": 1, "total_offers": 709, "total_payouts": 89886.81, "total_samples": 662513, "avg_payout_per_offer": 126.78, "avg_samples_per_offer": 934}, {"supplier_org": "Breakaway Music Festival", "locations_on_platform": 0, "total_offers": 8, "total_payouts": 87355.2, "total_samples": 72000, "avg_payout_per_offer": 10919.4, "avg_samples_per_offer": 9000}, {"supplier_org": "NYC Street Fairs", "locations_on_platform": 0, "total_offers": 19, "total_payouts": 82960.66, "total_samples": 108000, "avg_payout_per_offer": 4366.35, "avg_samples_per_offer": 5684}, {"supplier_org": "The Black Sheep", "locations_on_platform": 1, "total_offers": 417, "total_payouts": 74626.68, "total_samples": 138648, "avg_payout_per_offer": 178.96, "avg_samples_per_offer": 332}, {"supplier_org": "Drink. Eat. Relax.", "locations_on_platform": 0, "total_offers": 8, "total_payouts": 73188.0, "total_samples": 0, "avg_payout_per_offer": 9148.5, "avg_samples_per_offer": 0}, {"supplier_org": "Nadel", "locations_on_platform": 1, "total_offers": 2, "total_payouts": 72018.74, "total_samples": 0, "avg_payout_per_offer": 36009.37, "avg_samples_per_offer": 0}, {"supplier_org": "Scream Park", "locations_on_platform": 0, "total_offers": 15, "total_payouts": 70633.32, "total_samples": 329098, "avg_payout_per_offer": 4708.89, "avg_samples_per_offer": 21940}, {"supplier_org": "Follett", "locations_on_platform": 1, "total_offers": 71, "total_payouts": 70001.4, "total_samples": 0, "avg_payout_per_offer": 985.94, "avg_samples_per_offer": 0}, {"supplier_org": "Trillion Sources", "locations_on_platform": 1, "total_offers": 7, "total_payouts": 69925.25, "total_samples": 0, "avg_payout_per_offer": 9989.32, "avg_samples_per_offer": 0}, {"supplier_org": "Experiential Supply Co", "locations_on_platform": 0, "total_offers": 11, "total_payouts": 69436.6, "total_samples": 325788, "avg_payout_per_offer": 6312.42, "avg_samples_per_offer": 29617}, {"supplier_org": "Ivory Star Productions", "locations_on_platform": 0, "total_offers": 8, "total_payouts": 61643.79, "total_samples": 391236, "avg_payout_per_offer": 7705.47, "avg_samples_per_offer": 48905}, {"supplier_org": "American Campus Communities", "locations_on_platform": 1, "total_offers": 316, "total_payouts": 58972.27, "total_samples": 176187, "avg_payout_per_offer": 186.62, "avg_samples_per_offer": 558}, {"supplier_org": "Jersey Strong", "locations_on_platform": 0, "total_offers": 65, "total_payouts": 54342.45, "total_samples": 205454, "avg_payout_per_offer": 836.04, "avg_samples_per_offer": 3161}, {"supplier_org": "FIFO 3PL", "locations_on_platform": 1, "total_offers": 5, "total_payouts": 52609.65, "total_samples": 0, "avg_payout_per_offer": 10521.93, "avg_samples_per_offer": 0}, {"supplier_org": "The Scion Group", "locations_on_platform": 0, "total_offers": 253, "total_payouts": 52535.28, "total_samples": 158843, "avg_payout_per_offer": 207.65, "avg_samples_per_offer": 628}, {"supplier_org": "Bigsley", "locations_on_platform": 1, "total_offers": 21, "total_payouts": 52435.0, "total_samples": 380144, "avg_payout_per_offer": 2496.9, "avg_samples_per_offer": 18102}, {"supplier_org": "Andretti Indoor Karting & Games", "locations_on_platform": 1, "total_offers": 40, "total_payouts": 46611.51, "total_samples": 76648, "avg_payout_per_offer": 1165.29, "avg_samples_per_offer": 1916}, {"supplier_org": "F45", "locations_on_platform": 1, "total_offers": 635, "total_payouts": 46494.16, "total_samples": 204897, "avg_payout_per_offer": 73.22, "avg_samples_per_offer": 323}, {"supplier_org": "eyeBanner", "locations_on_platform": 1, "total_offers": 30, "total_payouts": 38714.02, "total_samples": 0, "avg_payout_per_offer": 1290.47, "avg_samples_per_offer": 0}, {"supplier_org": "Prime Social Group", "locations_on_platform": 0, "total_offers": 3, "total_payouts": 36350.0, "total_samples": 45000, "avg_payout_per_offer": 12116.67, "avg_samples_per_offer": 15000}, {"supplier_org": "Cannonball Productions", "locations_on_platform": 0, "total_offers": 36, "total_payouts": 35822.0, "total_samples": 11250, "avg_payout_per_offer": 995.06, "avg_samples_per_offer": 313}, {"supplier_org": "Ragnar", "locations_on_platform": 0, "total_offers": 35, "total_payouts": 35795.52, "total_samples": 28973, "avg_payout_per_offer": 1022.73, "avg_samples_per_offer": 828}, {"supplier_org": "Hot Wheels Monster Trucks Live", "locations_on_platform": 0, "total_offers": 21, "total_payouts": 35414.8, "total_samples": 134672, "avg_payout_per_offer": 1686.42, "avg_samples_per_offer": 6413}];
+
+// Filtered: removed shipping, staffing, printing, custom_fabrication (non-sampling categories)
+const DATA_TYPE = [{"event_type": "coworking", "locations_on_platform": 1, "total_offers": 6576, "total_payouts": 1072068.85, "total_samples": 1230931, "avg_payout_per_offer": 163.03, "avg_samples_per_offer": 187}, {"event_type": "fitness_studio", "locations_on_platform": 1, "total_offers": 2441, "total_payouts": 956825.16, "total_samples": 3135729, "avg_payout_per_offer": 391.98, "avg_samples_per_offer": 1285}, {"event_type": "university_housing", "locations_on_platform": 1, "total_offers": 5705, "total_payouts": 769505.79, "total_samples": 4433045, "avg_payout_per_offer": 134.88, "avg_samples_per_offer": 777}, {"event_type": "family_event", "locations_on_platform": 1, "total_offers": 82, "total_payouts": 554494.45, "total_samples": 1345595, "avg_payout_per_offer": 6762.13, "avg_samples_per_offer": 16410}, {"event_type": "travel_hospitality", "locations_on_platform": 1, "total_offers": 40, "total_payouts": 483742.86, "total_samples": 805370, "avg_payout_per_offer": 12093.57, "avg_samples_per_offer": 20134}, {"event_type": "mall", "locations_on_platform": 1, "total_offers": 248, "total_payouts": 450551.26, "total_samples": 2115422, "avg_payout_per_offer": 1816.74, "avg_samples_per_offer": 8530}, {"event_type": "endurance_race", "locations_on_platform": 1, "total_offers": 226, "total_payouts": 449923.86, "total_samples": 528335, "avg_payout_per_offer": 1990.81, "avg_samples_per_offer": 2338}, {"event_type": "student_involvement", "locations_on_platform": 1, "total_offers": 56, "total_payouts": 345600.75, "total_samples": 1246691, "avg_payout_per_offer": 6171.44, "avg_samples_per_offer": 22262}, {"event_type": "haunted_house", "locations_on_platform": 1, "total_offers": 96, "total_payouts": 320434.08, "total_samples": 1653342, "avg_payout_per_offer": 3337.85, "avg_samples_per_offer": 17222}, {"event_type": "farmers_market", "locations_on_platform": 1, "total_offers": 178, "total_payouts": 280788.6, "total_samples": 809157, "avg_payout_per_offer": 1577.46, "avg_samples_per_offer": 4546}, {"event_type": "university_event", "locations_on_platform": 0, "total_offers": 304, "total_payouts": 255347.5, "total_samples": 75668, "avg_payout_per_offer": 839.96, "avg_samples_per_offer": 249}, {"event_type": "music_festival", "locations_on_platform": 1, "total_offers": 71, "total_payouts": 237522.86, "total_samples": 402892, "avg_payout_per_offer": 3345.39, "avg_samples_per_offer": 5675}, {"event_type": "other", "locations_on_platform": 9, "total_offers": 65, "total_payouts": 209192.93, "total_samples": 0, "avg_payout_per_offer": 3218.35, "avg_samples_per_offer": 0}, {"event_type": "youth_sports", "locations_on_platform": 1, "total_offers": 48, "total_payouts": 151439.8, "total_samples": 300718, "avg_payout_per_offer": 3155.0, "avg_samples_per_offer": 6265}, {"event_type": "holiday_lights_drive_thru", "locations_on_platform": 1, "total_offers": 38, "total_payouts": 146526.62, "total_samples": 657444, "avg_payout_per_offer": 3855.96, "avg_samples_per_offer": 17301}, {"event_type": "digital_media", "locations_on_platform": 5, "total_offers": 61, "total_payouts": 133412.0, "total_samples": 1, "avg_payout_per_offer": 2187.08, "avg_samples_per_offer": 0}];
+
+let currentView = 'org';
+let selectedItem = null;
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function fmtN(n) { return Math.round(n).toLocaleString(); }
+function prettyType(s) { return s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()); }
+
+function setView(view) {
+  currentView = view;
+  selectedItem = null;
+  document.querySelectorAll('.toggle-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0 && view==='org') || (i===1 && view==='type'));
+  });
+  populateSelector();
+  clearStats();
+}
+
+function populateSelector() {
+  const sel = document.getElementById('selector');
+  const data = currentView === 'org' ? DATA_ORG : DATA_TYPE;
+  const nameKey = currentView === 'org' ? 'supplier_org' : 'event_type';
+  sel.innerHTML = '<option value="">— Select —</option>';
+  data.forEach(d => {
+    const name = currentView === 'type' ? prettyType(d[nameKey]) : d[nameKey];
+    sel.innerHTML += `<option value="${d[nameKey]}">${name}</option>`;
+  });
+}
+
+function onSelect() {
+  const val = document.getElementById('selector').value;
+  if (!val) { clearStats(); return; }
+  selectedItem = val;
+
+  const data = currentView === 'org' ? DATA_ORG : DATA_TYPE;
+  const nameKey = currentView === 'org' ? 'supplier_org' : 'event_type';
+  const item = data.find(d => d[nameKey] === val);
+  if (!item) return;
+
+  const displayName = currentView === 'type' ? prettyType(val) : val;
+  document.getElementById('perfSub').textContent = `Showing all-time platform data for ${displayName}`;
+  document.getElementById('s-gmv').textContent = fmt(item.total_payouts);
+  document.getElementById('s-offers').textContent = fmtN(item.total_offers);
+  document.getElementById('s-locs').textContent = fmtN(item.locations_on_platform);
+  document.getElementById('s-avg').textContent = fmt(item.avg_payout_per_offer);
+  document.getElementById('s-samples').textContent = fmtN(item.total_samples);
+  document.getElementById('s-avgsamp').textContent = fmtN(item.avg_samples_per_offer);
+
+  recalc();
+}
+
+function clearStats() {
+  document.getElementById('perfSub').textContent = 'Select a supplier org or event type above';
+  ['s-gmv','s-offers','s-locs','s-avg','s-samples','s-avgsamp'].forEach(id => {
+    document.getElementById(id).textContent = '—';
+  });
+  recalc();
+}
+
+function recalc() {
+  const val = document.getElementById('selector').value;
+  const data = currentView === 'org' ? DATA_ORG : DATA_TYPE;
+  const nameKey = currentView === 'org' ? 'supplier_org' : 'event_type';
+  const item = val ? data.find(d => d[nameKey] === val) : null;
+
+  const locs = parseFloat(document.getElementById('inp-locs').value) || 0;
+  const lowRate = parseFloat(document.getElementById('inp-low').value) || 0;
+  const highRate = parseFloat(document.getElementById('inp-high').value) || 0;
+  const commPct = parseFloat(document.getElementById('inp-comm').value) || 0;
+
+  const avgPayout = item ? item.avg_payout_per_offer : 0;
+  const avgSamples = item ? item.avg_samples_per_offer : 0;
+
+  const lowOffers = locs * lowRate;
+  const highOffers = locs * highRate;
+  const lowGmv = lowOffers * avgPayout;
+  const highGmv = highOffers * avgPayout;
+  const lowOrg = lowGmv * (commPct / 100);
+  const highOrg = highGmv * (commPct / 100);
+  const lowSamples = lowOffers * avgSamples;
+  const highSamples = highOffers * avgSamples;
+
+  document.getElementById('p-low-gmv').textContent = fmt(lowGmv);
+  document.getElementById('p-high-gmv').textContent = fmt(highGmv);
+  document.getElementById('p-low-org').textContent = fmt(lowOrg);
+  document.getElementById('p-high-org').textContent = fmt(highOrg);
+  document.getElementById('p-low-offers').textContent = fmtN(lowOffers);
+  document.getElementById('p-high-offers').textContent = fmtN(highOffers);
+  document.getElementById('p-low-samples').textContent = fmtN(lowSamples);
+  document.getElementById('p-high-samples').textContent = fmtN(highSamples);
+}
+
+function exportPDF() {
+  const val = document.getElementById('selector').value;
+  if (!val) {
+    alert('Please select a supplier org or event type first.');
+    return;
+  }
+
+  const data = currentView === 'org' ? DATA_ORG : DATA_TYPE;
+  const nameKey = currentView === 'org' ? 'supplier_org' : 'event_type';
+  const item = data.find(d => d[nameKey] === val);
+  if (!item) return;
+
+  const displayName = currentView === 'type' ? prettyType(val) : val;
+  const viewLabel = currentView === 'org' ? 'Supplier Org' : 'Event Type';
+
+  const locs = document.getElementById('inp-locs').value;
+  const lowRate = document.getElementById('inp-low').value;
+  const highRate = document.getElementById('inp-high').value;
+  const commPct = document.getElementById('inp-comm').value;
+
+  // Set print header info
+  document.getElementById('print-name').textContent = displayName;
+  document.getElementById('print-type').textContent = viewLabel + ' • Revenue Projection';
+  document.getElementById('print-inputs').textContent =
+    `Network: ${parseInt(locs).toLocaleString()} locations • Low: ${lowRate} offers/loc/yr • High: ${highRate} offers/loc/yr • Commission: ${commPct}%`;
+
+  // Trigger browser print (Save as PDF)
+  window.print();
+}
+
+// Init
+populateSelector();
 </script>
 </body>
 </html>
