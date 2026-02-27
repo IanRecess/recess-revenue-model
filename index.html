@@ -22,6 +22,37 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height:100vh; }
 
+  /* Password Gate */
+  .gate-overlay {
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+  }
+  .gate-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 48px; text-align: center; max-width: 400px; width: 90%;
+  }
+  .gate-box h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  .gate-box h1 span { color: var(--accent2); }
+  .gate-box p { color: var(--text2); font-size: 14px; margin-bottom: 24px; }
+  .gate-box input[type="password"] {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 12px 16px; border-radius: 8px; font-size: 16px; outline: none;
+    width: 100%; text-align: center; transition: border-color 0.2s;
+  }
+  .gate-box input[type="password"]:focus { border-color: var(--accent); }
+  .gate-box .gate-btn {
+    margin-top: 16px; padding: 12px 32px; font-size: 15px; font-weight: 600;
+    cursor: pointer; background: var(--accent); color: #fff; border: none;
+    border-radius: 8px; transition: background 0.2s; width: 100%;
+  }
+  .gate-box .gate-btn:hover { background: var(--accent2); }
+  .gate-error { color: var(--red); font-size: 13px; margin-top: 12px; display: none; }
+
+  /* App (hidden until unlocked) */
+  .app-container { display: none; }
+
   .header { padding: 24px 32px; border-bottom: 1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
   .header h1 { font-size: 20px; font-weight: 600; }
   .header h1 span { color: var(--accent2); }
@@ -92,6 +123,7 @@
 
   @media print {
     body { background: #fff !important; color: #1a1a2e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .gate-overlay { display: none !important; }
     .header { border-bottom: 2px solid #e0e0e0; padding: 16px 24px; }
     .header h1 { color: #1a1a2e; }
     .header h1 span { color: #6c5ce7; }
@@ -126,10 +158,24 @@
 </head>
 <body>
 
+<!-- Password Gate -->
+<div class="gate-overlay" id="gate">
+  <div class="gate-box">
+    <h1><span>Recess</span> — Revenue Model</h1>
+    <p>This tool contains confidential platform data.<br>Enter the password to continue.</p>
+    <input type="password" id="gate-pw" placeholder="Password" autocomplete="off" autofocus>
+    <button class="gate-btn" id="gate-submit" onclick="tryUnlock()">Unlock</button>
+    <div class="gate-error" id="gate-error">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- App (hidden until unlocked) -->
+<div class="app-container" id="app">
+
 <div class="header">
   <div>
     <h1><span>Recess</span> — Partner Revenue Model</h1>
-    <div class="subtitle">Live data from platform • Last updated Feb 2026</div>
+    <div class="subtitle">Live data from platform &bull; Last updated Feb 2026</div>
   </div>
 </div>
 
@@ -153,25 +199,23 @@
 </div>
 
 <div class="main">
-  <!-- Current Performance -->
   <div>
     <div class="section-title">Current Platform Performance</div>
     <div class="section-sub" id="perfSub">Select a supplier org or event type above</div>
   </div>
 
   <div class="stats-row" id="statsRow">
-    <div class="stat-card green"><div class="label">Total Payouts (GMV)</div><div class="value" id="s-gmv">—</div></div>
-    <div class="stat-card purple"><div class="label">Total Offers</div><div class="value" id="s-offers">—</div></div>
-    <div class="stat-card blue"><div class="label">Locations on Platform</div><div class="value" id="s-locs">—</div></div>
-    <div class="stat-card orange"><div class="label">Avg Payout / Offer</div><div class="value" id="s-avg">—</div></div>
+    <div class="stat-card green"><div class="label">Total Payouts (GMV)</div><div class="value" id="s-gmv">&mdash;</div></div>
+    <div class="stat-card purple"><div class="label">Total Offers</div><div class="value" id="s-offers">&mdash;</div></div>
+    <div class="stat-card blue"><div class="label">Locations on Platform</div><div class="value" id="s-locs">&mdash;</div></div>
+    <div class="stat-card orange"><div class="label">Avg Payout / Offer</div><div class="value" id="s-avg">&mdash;</div></div>
   </div>
 
   <div class="stats-row">
-    <div class="stat-card"><div class="label">Total Samples</div><div class="value num" id="s-samples">—</div></div>
-    <div class="stat-card"><div class="label">Avg Samples / Offer</div><div class="value num" id="s-avgsamp">—</div></div>
+    <div class="stat-card"><div class="label">Total Samples</div><div class="value num" id="s-samples">&mdash;</div></div>
+    <div class="stat-card"><div class="label">Avg Samples / Offer</div><div class="value num" id="s-avgsamp">&mdash;</div></div>
   </div>
 
-  <!-- Calculator -->
   <div style="margin-top:8px;">
     <div class="section-title">Revenue Projection Calculator</div>
     <div class="section-sub">Enter the partner's full network size and offers/location/year to project revenue</div>
@@ -215,7 +259,6 @@
     </div>
   </div>
 
-  <!-- Export Button -->
   <div class="export-wrap" style="display:flex; justify-content:flex-end; margin-top: 8px;">
     <button class="export-btn" onclick="exportPDF()">
       <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
@@ -224,12 +267,75 @@
   </div>
 </div>
 
+</div><!-- end .app-container -->
+
 <script>
-const DATA_ORG = [{"supplier_org": "Nautical Fulfillment and Logistics", "locations_on_platform": 3, "total_offers": 73, "total_payouts": 1046967.35, "total_samples": 1, "avg_payout_per_offer": 14342.02, "avg_samples_per_offer": 0}, {"supplier_org": "Bulu Inc.", "locations_on_platform": 3, "total_offers": 59, "total_payouts": 967711.65, "total_samples": 10, "avg_payout_per_offer": 16401.89, "avg_samples_per_offer": 0}, {"supplier_org": "WeWork", "locations_on_platform": 1, "total_offers": 5580, "total_payouts": 916874.83, "total_samples": 797171, "avg_payout_per_offer": 164.31, "avg_samples_per_offer": 143}, {"supplier_org": "School Family Media", "locations_on_platform": 0, "total_offers": 13, "total_payouts": 487470.0, "total_samples": 1025001, "avg_payout_per_offer": 37497.69, "avg_samples_per_offer": 78846}, {"supplier_org": "Inspired Consumer", "locations_on_platform": 2, "total_offers": 44, "total_payouts": 456445.71, "total_samples": 1874739, "avg_payout_per_offer": 10373.77, "avg_samples_per_offer": 42608}, {"supplier_org": "Erin Stowell", "locations_on_platform": 2, "total_offers": 15, "total_payouts": 454620.38, "total_samples": 1, "avg_payout_per_offer": 30308.03, "avg_samples_per_offer": 0}, {"supplier_org": "Crunch Fitness", "locations_on_platform": 1, "total_offers": 680, "total_payouts": 409929.63, "total_samples": 1457305, "avg_payout_per_offer": 602.84, "avg_samples_per_offer": 2143}, {"supplier_org": "Tanger Outlets", "locations_on_platform": 1, "total_offers": 219, "total_payouts": 389046.87, "total_samples": 2065588, "avg_payout_per_offer": 1776.47, "avg_samples_per_offer": 9432}, {"supplier_org": "Geezy", "locations_on_platform": 0, "total_offers": 31, "total_payouts": 374341.46, "total_samples": 624021, "avg_payout_per_offer": 12075.53, "avg_samples_per_offer": 20130}, {"supplier_org": "WPS Administrative Corp", "locations_on_platform": 1, "total_offers": 9, "total_payouts": 370555.82, "total_samples": 0, "avg_payout_per_offer": 41172.87, "avg_samples_per_offer": 0}, {"supplier_org": "Alpen&Glo", "locations_on_platform": 1, "total_offers": 1, "total_payouts": 290000.0, "total_samples": 1, "avg_payout_per_offer": 290000.0, "avg_samples_per_offer": 1}, {"supplier_org": "UpClose Marketing", "locations_on_platform": 0, "total_offers": 8, "total_payouts": 240936.1, "total_samples": 520000, "avg_payout_per_offer": 30117.01, "avg_samples_per_offer": 65000}, {"supplier_org": "Spartan Race", "locations_on_platform": 1, "total_offers": 62, "total_payouts": 238763.02, "total_samples": 101096, "avg_payout_per_offer": 3851.02, "avg_samples_per_offer": 1631}, {"supplier_org": "Cardinal Group Management & Advisory LLC-1", "locations_on_platform": 1, "total_offers": 2091, "total_payouts": 187246.94, "total_samples": 1236926, "avg_payout_per_offer": 89.55, "avg_samples_per_offer": 592}, {"supplier_org": "West Coast Farmers Market", "locations_on_platform": 1, "total_offers": 130, "total_payouts": 160240.6, "total_samples": 617357, "avg_payout_per_offer": 1232.62, "avg_samples_per_offer": 4749}, {"supplier_org": "Recess College Bag", "locations_on_platform": 0, "total_offers": 22, "total_payouts": 150036.54, "total_samples": 1182017, "avg_payout_per_offer": 6819.84, "avg_samples_per_offer": 53728}, {"supplier_org": "Barry's", "locations_on_platform": 0, "total_offers": 1, "total_payouts": 150000.0, "total_samples": 1, "avg_payout_per_offer": 150000.0, "avg_samples_per_offer": 1}, {"supplier_org": "Ventures Endurance", "locations_on_platform": 1, "total_offers": 46, "total_payouts": 133835.66, "total_samples": 198114, "avg_payout_per_offer": 2909.47, "avg_samples_per_offer": 4307}, {"supplier_org": "LeagueSide", "locations_on_platform": 0, "total_offers": 38, "total_payouts": 130766.8, "total_samples": 185747, "avg_payout_per_offer": 3441.23, "avg_samples_per_offer": 4888}, {"supplier_org": "Eagle Printing & Sign", "locations_on_platform": 2, "total_offers": 78, "total_payouts": 128926.77, "total_samples": 3, "avg_payout_per_offer": 1652.91, "avg_samples_per_offer": 0}, {"supplier_org": "DoorDash", "locations_on_platform": 1, "total_offers": 13, "total_payouts": 126951.0, "total_samples": 57960, "avg_payout_per_offer": 9765.46, "avg_samples_per_offer": 4458}, {"supplier_org": "Players Sport & Social Group", "locations_on_platform": 0, "total_offers": 39, "total_payouts": 121190.0, "total_samples": 0, "avg_payout_per_offer": 3107.44, "avg_samples_per_offer": 0}, {"supplier_org": "Brand Distribution Network", "locations_on_platform": 4, "total_offers": 23, "total_payouts": 120584.42, "total_samples": 21, "avg_payout_per_offer": 5242.8, "avg_samples_per_offer": 1}, {"supplier_org": "HelloFresh", "locations_on_platform": 0, "total_offers": 5, "total_payouts": 117865.5, "total_samples": 371950, "avg_payout_per_offer": 23573.1, "avg_samples_per_offer": 74390}, {"supplier_org": "Elevate Digital USA LLC", "locations_on_platform": 1, "total_offers": 55, "total_payouts": 112844.05, "total_samples": 0, "avg_payout_per_offer": 2051.71, "avg_samples_per_offer": 0}, {"supplier_org": "The Original Farmers Market", "locations_on_platform": 1, "total_offers": 16, "total_payouts": 103335.57, "total_samples": 190692, "avg_payout_per_offer": 6458.47, "avg_samples_per_offer": 11918}, {"supplier_org": "Current International Freight Inc", "locations_on_platform": 1, "total_offers": 3, "total_payouts": 101869.85, "total_samples": 0, "avg_payout_per_offer": 33956.62, "avg_samples_per_offer": 0}, {"supplier_org": "Asset Living", "locations_on_platform": 1, "total_offers": 709, "total_payouts": 89886.81, "total_samples": 662513, "avg_payout_per_offer": 126.78, "avg_samples_per_offer": 934}, {"supplier_org": "Breakaway Music Festival", "locations_on_platform": 0, "total_offers": 8, "total_payouts": 87355.2, "total_samples": 72000, "avg_payout_per_offer": 10919.4, "avg_samples_per_offer": 9000}, {"supplier_org": "NYC Street Fairs", "locations_on_platform": 0, "total_offers": 19, "total_payouts": 82960.66, "total_samples": 108000, "avg_payout_per_offer": 4366.35, "avg_samples_per_offer": 5684}, {"supplier_org": "The Black Sheep", "locations_on_platform": 1, "total_offers": 417, "total_payouts": 74626.68, "total_samples": 138648, "avg_payout_per_offer": 178.96, "avg_samples_per_offer": 332}, {"supplier_org": "Drink. Eat. Relax.", "locations_on_platform": 0, "total_offers": 8, "total_payouts": 73188.0, "total_samples": 0, "avg_payout_per_offer": 9148.5, "avg_samples_per_offer": 0}, {"supplier_org": "Nadel", "locations_on_platform": 1, "total_offers": 2, "total_payouts": 72018.74, "total_samples": 0, "avg_payout_per_offer": 36009.37, "avg_samples_per_offer": 0}, {"supplier_org": "Scream Park", "locations_on_platform": 0, "total_offers": 15, "total_payouts": 70633.32, "total_samples": 329098, "avg_payout_per_offer": 4708.89, "avg_samples_per_offer": 21940}, {"supplier_org": "Follett", "locations_on_platform": 1, "total_offers": 71, "total_payouts": 70001.4, "total_samples": 0, "avg_payout_per_offer": 985.94, "avg_samples_per_offer": 0}, {"supplier_org": "Trillion Sources", "locations_on_platform": 1, "total_offers": 7, "total_payouts": 69925.25, "total_samples": 0, "avg_payout_per_offer": 9989.32, "avg_samples_per_offer": 0}, {"supplier_org": "Experiential Supply Co", "locations_on_platform": 0, "total_offers": 11, "total_payouts": 69436.6, "total_samples": 325788, "avg_payout_per_offer": 6312.42, "avg_samples_per_offer": 29617}, {"supplier_org": "Ivory Star Productions", "locations_on_platform": 0, "total_offers": 8, "total_payouts": 61643.79, "total_samples": 391236, "avg_payout_per_offer": 7705.47, "avg_samples_per_offer": 48905}, {"supplier_org": "American Campus Communities", "locations_on_platform": 1, "total_offers": 316, "total_payouts": 58972.27, "total_samples": 176187, "avg_payout_per_offer": 186.62, "avg_samples_per_offer": 558}, {"supplier_org": "Jersey Strong", "locations_on_platform": 0, "total_offers": 65, "total_payouts": 54342.45, "total_samples": 205454, "avg_payout_per_offer": 836.04, "avg_samples_per_offer": 3161}, {"supplier_org": "FIFO 3PL", "locations_on_platform": 1, "total_offers": 5, "total_payouts": 52609.65, "total_samples": 0, "avg_payout_per_offer": 10521.93, "avg_samples_per_offer": 0}, {"supplier_org": "The Scion Group", "locations_on_platform": 0, "total_offers": 253, "total_payouts": 52535.28, "total_samples": 158843, "avg_payout_per_offer": 207.65, "avg_samples_per_offer": 628}, {"supplier_org": "Bigsley", "locations_on_platform": 1, "total_offers": 21, "total_payouts": 52435.0, "total_samples": 380144, "avg_payout_per_offer": 2496.9, "avg_samples_per_offer": 18102}, {"supplier_org": "Andretti Indoor Karting & Games", "locations_on_platform": 1, "total_offers": 40, "total_payouts": 46611.51, "total_samples": 76648, "avg_payout_per_offer": 1165.29, "avg_samples_per_offer": 1916}, {"supplier_org": "F45", "locations_on_platform": 1, "total_offers": 635, "total_payouts": 46494.16, "total_samples": 204897, "avg_payout_per_offer": 73.22, "avg_samples_per_offer": 323}, {"supplier_org": "eyeBanner", "locations_on_platform": 1, "total_offers": 30, "total_payouts": 38714.02, "total_samples": 0, "avg_payout_per_offer": 1290.47, "avg_samples_per_offer": 0}, {"supplier_org": "Prime Social Group", "locations_on_platform": 0, "total_offers": 3, "total_payouts": 36350.0, "total_samples": 45000, "avg_payout_per_offer": 12116.67, "avg_samples_per_offer": 15000}, {"supplier_org": "Cannonball Productions", "locations_on_platform": 0, "total_offers": 36, "total_payouts": 35822.0, "total_samples": 11250, "avg_payout_per_offer": 995.06, "avg_samples_per_offer": 313}, {"supplier_org": "Ragnar", "locations_on_platform": 0, "total_offers": 35, "total_payouts": 35795.52, "total_samples": 28973, "avg_payout_per_offer": 1022.73, "avg_samples_per_offer": 828}, {"supplier_org": "Hot Wheels Monster Trucks Live", "locations_on_platform": 0, "total_offers": 21, "total_payouts": 35414.8, "total_samples": 134672, "avg_payout_per_offer": 1686.42, "avg_samples_per_offer": 6413}];
+// Encrypted data blob
+const ENCRYPTED_DATA = "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";
 
-// Filtered: removed shipping, staffing, printing, custom_fabrication (non-sampling categories)
-const DATA_TYPE = [{"event_type": "coworking", "locations_on_platform": 1, "total_offers": 6576, "total_payouts": 1072068.85, "total_samples": 1230931, "avg_payout_per_offer": 163.03, "avg_samples_per_offer": 187}, {"event_type": "fitness_studio", "locations_on_platform": 1, "total_offers": 2441, "total_payouts": 956825.16, "total_samples": 3135729, "avg_payout_per_offer": 391.98, "avg_samples_per_offer": 1285}, {"event_type": "university_housing", "locations_on_platform": 1, "total_offers": 5705, "total_payouts": 769505.79, "total_samples": 4433045, "avg_payout_per_offer": 134.88, "avg_samples_per_offer": 777}, {"event_type": "family_event", "locations_on_platform": 1, "total_offers": 82, "total_payouts": 554494.45, "total_samples": 1345595, "avg_payout_per_offer": 6762.13, "avg_samples_per_offer": 16410}, {"event_type": "travel_hospitality", "locations_on_platform": 1, "total_offers": 40, "total_payouts": 483742.86, "total_samples": 805370, "avg_payout_per_offer": 12093.57, "avg_samples_per_offer": 20134}, {"event_type": "mall", "locations_on_platform": 1, "total_offers": 248, "total_payouts": 450551.26, "total_samples": 2115422, "avg_payout_per_offer": 1816.74, "avg_samples_per_offer": 8530}, {"event_type": "endurance_race", "locations_on_platform": 1, "total_offers": 226, "total_payouts": 449923.86, "total_samples": 528335, "avg_payout_per_offer": 1990.81, "avg_samples_per_offer": 2338}, {"event_type": "student_involvement", "locations_on_platform": 1, "total_offers": 56, "total_payouts": 345600.75, "total_samples": 1246691, "avg_payout_per_offer": 6171.44, "avg_samples_per_offer": 22262}, {"event_type": "haunted_house", "locations_on_platform": 1, "total_offers": 96, "total_payouts": 320434.08, "total_samples": 1653342, "avg_payout_per_offer": 3337.85, "avg_samples_per_offer": 17222}, {"event_type": "farmers_market", "locations_on_platform": 1, "total_offers": 178, "total_payouts": 280788.6, "total_samples": 809157, "avg_payout_per_offer": 1577.46, "avg_samples_per_offer": 4546}, {"event_type": "university_event", "locations_on_platform": 0, "total_offers": 304, "total_payouts": 255347.5, "total_samples": 75668, "avg_payout_per_offer": 839.96, "avg_samples_per_offer": 249}, {"event_type": "music_festival", "locations_on_platform": 1, "total_offers": 71, "total_payouts": 237522.86, "total_samples": 402892, "avg_payout_per_offer": 3345.39, "avg_samples_per_offer": 5675}, {"event_type": "other", "locations_on_platform": 9, "total_offers": 65, "total_payouts": 209192.93, "total_samples": 0, "avg_payout_per_offer": 3218.35, "avg_samples_per_offer": 0}, {"event_type": "youth_sports", "locations_on_platform": 1, "total_offers": 48, "total_payouts": 151439.8, "total_samples": 300718, "avg_payout_per_offer": 3155.0, "avg_samples_per_offer": 6265}, {"event_type": "holiday_lights_drive_thru", "locations_on_platform": 1, "total_offers": 38, "total_payouts": 146526.62, "total_samples": 657444, "avg_payout_per_offer": 3855.96, "avg_samples_per_offer": 17301}, {"event_type": "digital_media", "locations_on_platform": 5, "total_offers": 61, "total_payouts": 133412.0, "total_samples": 1, "avg_payout_per_offer": 2187.08, "avg_samples_per_offer": 0}];
+// Decryption
+function b64ToArr(b64) {
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return arr;
+}
 
+async function decryptData(password) {
+  const raw = b64ToArr(ENCRYPTED_DATA);
+  const salt = raw.slice(0, 16);
+  const iv = raw.slice(16, 28);
+  const ciphertext = raw.slice(28);
+
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']
+  );
+  const key = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
+  );
+  const decrypted = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv }, key, ciphertext
+  );
+  return JSON.parse(new TextDecoder().decode(decrypted));
+}
+
+let DATA_ORG = [];
+let DATA_TYPE = [];
+
+async function tryUnlock() {
+  const pw = document.getElementById('gate-pw').value;
+  const errEl = document.getElementById('gate-error');
+  const btn = document.getElementById('gate-submit');
+
+  btn.textContent = 'Unlocking...';
+  btn.disabled = true;
+  errEl.style.display = 'none';
+
+  try {
+    const data = await decryptData(pw);
+    DATA_ORG = data.org;
+    DATA_TYPE = data.type;
+
+    // Hide gate, show app
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    populateSelector();
+  } catch (e) {
+    errEl.style.display = 'block';
+    btn.textContent = 'Unlock';
+    btn.disabled = false;
+    document.getElementById('gate-pw').value = '';
+    document.getElementById('gate-pw').focus();
+  }
+}
+
+// Allow Enter key to submit
+document.getElementById('gate-pw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') tryUnlock();
+});
+
+// App logic
 let currentView = 'org';
 let selectedItem = null;
 
@@ -251,10 +357,10 @@ function populateSelector() {
   const sel = document.getElementById('selector');
   const data = currentView === 'org' ? DATA_ORG : DATA_TYPE;
   const nameKey = currentView === 'org' ? 'supplier_org' : 'event_type';
-  sel.innerHTML = '<option value="">— Select —</option>';
+  sel.innerHTML = '<option value="">\u2014 Select \u2014</option>';
   data.forEach(d => {
     const name = currentView === 'type' ? prettyType(d[nameKey]) : d[nameKey];
-    sel.innerHTML += `<option value="${d[nameKey]}">${name}</option>`;
+    sel.innerHTML += '<option value="' + d[nameKey] + '">' + name + '</option>';
   });
 }
 
@@ -269,7 +375,7 @@ function onSelect() {
   if (!item) return;
 
   const displayName = currentView === 'type' ? prettyType(val) : val;
-  document.getElementById('perfSub').textContent = `Showing all-time platform data for ${displayName}`;
+  document.getElementById('perfSub').textContent = 'Showing all-time platform data for ' + displayName;
   document.getElementById('s-gmv').textContent = fmt(item.total_payouts);
   document.getElementById('s-offers').textContent = fmtN(item.total_offers);
   document.getElementById('s-locs').textContent = fmtN(item.locations_on_platform);
@@ -283,7 +389,7 @@ function onSelect() {
 function clearStats() {
   document.getElementById('perfSub').textContent = 'Select a supplier org or event type above';
   ['s-gmv','s-offers','s-locs','s-avg','s-samples','s-avgsamp'].forEach(id => {
-    document.getElementById(id).textContent = '—';
+    document.getElementById(id).textContent = '\u2014';
   });
   recalc();
 }
@@ -323,10 +429,7 @@ function recalc() {
 
 function exportPDF() {
   const val = document.getElementById('selector').value;
-  if (!val) {
-    alert('Please select a supplier org or event type first.');
-    return;
-  }
+  if (!val) { alert('Please select a supplier org or event type first.'); return; }
 
   const data = currentView === 'org' ? DATA_ORG : DATA_TYPE;
   const nameKey = currentView === 'org' ? 'supplier_org' : 'event_type';
@@ -341,18 +444,13 @@ function exportPDF() {
   const highRate = document.getElementById('inp-high').value;
   const commPct = document.getElementById('inp-comm').value;
 
-  // Set print header info
   document.getElementById('print-name').textContent = displayName;
-  document.getElementById('print-type').textContent = viewLabel + ' • Revenue Projection';
+  document.getElementById('print-type').textContent = viewLabel + ' \u2022 Revenue Projection';
   document.getElementById('print-inputs').textContent =
-    `Network: ${parseInt(locs).toLocaleString()} locations • Low: ${lowRate} offers/loc/yr • High: ${highRate} offers/loc/yr • Commission: ${commPct}%`;
+    'Network: ' + parseInt(locs).toLocaleString() + ' locations \u2022 Low: ' + lowRate + ' offers/loc/yr \u2022 High: ' + highRate + ' offers/loc/yr \u2022 Commission: ' + commPct + '%';
 
-  // Trigger browser print (Save as PDF)
   window.print();
 }
-
-// Init
-populateSelector();
 </script>
 </body>
 </html>
